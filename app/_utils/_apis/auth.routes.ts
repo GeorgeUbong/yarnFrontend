@@ -35,8 +35,10 @@ export type SignupResponse = z.infer<typeof signupResponseSchema>;
 export type LoginResponse = SignupResponse;
 export type RefreshTokenResponse = z.infer<typeof refreshTokenResponseSchema>;
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
-const HEAD = "/api/v1/";
+export const API_BASE_URL = (
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"
+).replace(/\/+$/, "");
+export const HEAD = "/api/v1/";
 
 export async function signup(input: SignupRequest): Promise<SignupResponse> {
   const response = await fetch(`${API_BASE_URL}${HEAD}signup`, {
@@ -89,7 +91,7 @@ export async function refreshAccessToken(
       "Content-Type": "application/json",
     },
     body: JSON.stringify(input),
-    cache: "no-store",
+    cache: "no-store",   
   });
 
   if (!response.ok) {

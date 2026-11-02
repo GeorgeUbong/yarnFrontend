@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, type FormEvent } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
@@ -8,10 +9,54 @@ import Avatar from "@mui/material/Avatar";
 import AvatarGroup from "@mui/material/AvatarGroup";
 
 import { Button } from "./components/button";
+import { signup } from "./_utils/_apis/auth.routes";
 
 const brand = "#1b5e20";
 
 export default function Home() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [feedback, setFeedback] = useState<{
+    type: "error" | "success";
+    message: string;
+  } | null>(null);
+
+  async function handleSignup(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setFeedback(null);
+
+    const formData = new FormData(event.currentTarget);
+    const password = String(formData.get("password") ?? "");
+    const confirmPassword = String(formData.get("confirmPassword") ?? "");
+
+    if (password !== confirmPassword) {
+      setFeedback({ type: "error", message: "Passwords do not match." });
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const response = await signup({
+        username: String(formData.get("username") ?? "").trim(),
+        email: String(formData.get("email") ?? "").trim(),
+        password,
+      });
+
+      console.log("Signup response:", response);
+      setFeedback({ type: "success", message: response.message });
+    } catch (error) {
+      setFeedback({
+        type: "error",
+        message:
+          error instanceof Error
+            ? error.message
+            : "Unable to create your account. Please try again.",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
   return (
     <main className="flex min-h-screen w-full flex-col lg:flex-row">
       <Box
@@ -109,14 +154,40 @@ export default function Home() {
             Enter email
           </Typography>
 
-          <Stack spacing={2.5}>
+          <Stack component="form" onSubmit={handleSignup} spacing={2.5}>
+            <TextField
+              aria-label="Username"
+              name="username"
+              placeholder="Choose a username"
+              variant="outlined"
+              fullWidth
+              autoComplete="username"
+              required
+              disabled={isSubmitting}
+              slotProps={{
+                htmlInput: { "aria-label": "Username" },
+                input: { sx: { borderRadius: 1.5 } },
+              }}
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  minHeight: 52,
+                  "& fieldset": { borderColor: brand },
+                  "&:hover fieldset": { borderColor: brand },
+                  "&.Mui-focused fieldset": { borderColor: brand },
+                },
+              }}
+            />
+
             <TextField
               aria-label="Email address"
+              name="email"
               placeholder="Enter email"
               variant="outlined"
               fullWidth
               type="email"
               autoComplete="email"
+              required
+              disabled={isSubmitting}
               slotProps={{
                 htmlInput: { "aria-label": "Email address" },
                 input: { sx: { borderRadius: 1.5 } },
@@ -134,10 +205,13 @@ export default function Home() {
             <TextField
               aria-label="Password"
               placeholder="Create password"
+              name="password"
               type="password"
               variant="outlined"
               fullWidth
               autoComplete="new-password"
+              required
+              disabled={isSubmitting}
               slotProps={{
                 htmlInput: { "aria-label": "Create password" },
                 input: { sx: { borderRadius: 1.5 } },
@@ -154,11 +228,14 @@ export default function Home() {
 
             <TextField
               aria-label="Confirm password"
+              name="confirmPassword"
               placeholder="Confirm password"
               type="password"
               variant="outlined"
               fullWidth
               autoComplete="new-password"
+              required
+              disabled={isSubmitting}
               slotProps={{
                 htmlInput: { "aria-label": "Confirm password" },
                 input: { sx: { borderRadius: 1.5 } },
@@ -173,10 +250,21 @@ export default function Home() {
               }}
             />
 
+            {feedback && (
+              <Typography
+                role={feedback.type === "error" ? "alert" : "status"}
+                color={feedback.type === "error" ? "error" : "success.main"}
+                variant="body2"
+              >
+                {feedback.message}
+              </Typography>
+            )}
+
             <Button
-              type="button"
+              type="submit"
               variant="primary"
               fullWidth
+              isLoading={isSubmitting}
               sx={{
                 mt: 2,
                 minHeight: 52,
@@ -185,7 +273,7 @@ export default function Home() {
                 "&:hover": { bgcolor: "#154a19" },
               }}
             >
-              SignUp
+              {isSubmitting ? "Creating account..." : "SignUp"}
             </Button>
           </Stack>
         </Box>
