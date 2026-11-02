@@ -1,5 +1,6 @@
 
 import type { Metadata } from "next";
+import { jost, poppins } from "./theme/fonts";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -13,7 +14,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${poppins.variable} ${jost.variable}`}>
       <body className="min-h-screen antialiased">
         {children}
       </body>

@@ -10,6 +10,7 @@ import AvatarGroup from "@mui/material/AvatarGroup";
 
 import { Button } from "./components/button";
 import { signup } from "./_utils/_apis/auth.routes";
+import { BRAND_COLORS } from "./theme/theme";
 
 const brand = "#1b5e20";
 
@@ -62,7 +63,7 @@ export default function Home() {
       <Box
         component="section"
         aria-label="Welcome to YarnNaija"
-        className="relative flex min-h-[320px] w-full flex-col justify-center overflow-hidden px-6 py-14 text-white sm:px-12 lg:min-h-screen lg:w-1/2 lg:px-11 xl:px-16"
+        className="relative hidden min-h-[320px] w-full flex-col justify-center overflow-hidden px-6 py-14 text-white sm:px-12 lg:flex lg:min-h-screen lg:w-1/2 lg:px-11 xl:px-16"
         sx={{
           background: "linear-gradient(125deg, #7ecb81 0%, #125900 78%)",
         }}
@@ -130,14 +131,14 @@ export default function Home() {
       <Box
         component="section"
         aria-label="Create your account"
-        className="flex min-h-[560px] w-full items-center justify-center bg-white px-6 py-14 sm:px-12 lg:min-h-screen lg:w-1/2 lg:px-10 xl:px-16"
+        className="flex min-h-[560px] w-full items-center justify-center px-6 py-14 sm:px-12 lg:min-h-screen lg:w-1/2 lg:px-10 xl:px-16"
+        sx={{ backgroundColor: BRAND_COLORS[50] }}
       >
         <Box className="mx-auto w-full max-w-[402px]">
           <Typography
             component="h2"
             sx={{
               color: brand,
-              fontFamily: '"Comic Sans MS", "Chalkboard SE", sans-serif',
               fontSize: { xs: "1.5rem", sm: "1.75rem" },
               fontWeight: 800,
               lineHeight: 1.3,

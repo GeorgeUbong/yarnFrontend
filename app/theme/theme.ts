@@ -83,7 +83,13 @@ declare module '@mui/material/styles' {
  */
 const sharedThemeOptions = {
   typography: {
-    fontFamily: 'var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+    fontFamily: 'var(--font-poppins), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+    h1: { fontFamily: 'var(--font-jost), sans-serif' },
+    h2: { fontFamily: 'var(--font-jost), sans-serif' },
+    h3: { fontFamily: 'var(--font-jost), sans-serif' },
+    h4: { fontFamily: 'var(--font-jost), sans-serif' },
+    h5: { fontFamily: 'var(--font-jost), sans-serif' },
+    h6: { fontFamily: 'var(--font-jost), sans-serif' },
     button: {
       textTransform: 'none' as const,
       fontWeight: 600,
