@@ -1,9 +1,12 @@
+import { FeedLoader } from "../components/feed-loader";
+
 export default function FeedLoading() {
   return (
-    <div className="flex items-center justify-center min-h-[200px] text-foreground/70">
-      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mr-3"></div>
+    <div
+      className="flex min-h-[200px] items-center justify-center gap-3"
+    >
+      <FeedLoader label="Loading feed" />
       <span>Loading feed...</span>
     </div>
   );
 }
-

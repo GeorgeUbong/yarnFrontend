@@ -1,157 +1,7 @@
 @import "tailwindcss";
 
-:root {
-  /* Brand Palette from Identity Image */
-  --brand-50: #e8f5e9;
-  --brand-200: #a5d6a7;
-  --brand-400: #66bb6a;
-  --brand-900: #1b5e20;
-
-  /* Light Mode Semantic Variables */
-  --background: #e8f5e9;
-  --foreground: #121814;
-  --card: #ffffff;
-  --card-foreground: #121814;
-  --surface: #ffffff;
-  --surface-variant: #e8f5e9;
-
-  --primary: #1b5e20;
-  --primary-hover: #154a19;
-  --primary-foreground: #ffffff;
-
-  --secondary: #66bb6a;
-  --secondary-hover: #57a65b;
-  --secondary-foreground: #ffffff;
-
-  --accent: #a5d6a7;
-  --accent-foreground: #121814;
-
-  --border: #e0e6e1;
-  --input: #e0e6e1;
-  --ring: #1b5e20;
-
-  /* Accent Colors: Error & Info */
-  --error: #d32f2f;
-  --error-foreground: #ffffff;
-  --error-surface: #ffeaec;
-  --error-border: #fca5a5;
-
-  --info: #0288d1;
-  --info-foreground: #ffffff;
-  --info-surface: #e1f5fe;
-  --info-border: #7dd3fc;
-
-  /* Additional Feedback Accents */
-  --success: #1b5e20;
-  --success-foreground: #ffffff;
-  --success-surface: #e8f5e9;
-
-  --warning: #ed6c02;
-  --warning-foreground: #ffffff;
-  --warning-surface: #fff3e0;
-}
-
-/* Dark Mode Semantic Variables */
-.dark,
-[data-theme="dark"] {
-  --background: #0a160d;
-  --foreground: #e8f5e9;
-  --card: #141d17;
-  --card-foreground: #e8f5e9;
-  --surface: #141d17;
-  --surface-variant: #1c2921;
-
-  --primary: #66bb6a;
-  --primary-hover: #81c784;
-  --primary-foreground: #09170c;
-
-  --secondary: #a5d6a7;
-  --secondary-hover: #c8e6c9;
-  --secondary-foreground: #09170c;
-
-  --accent: #1b5e20;
-  --accent-foreground: #e8f5e9;
-
-  --border: #233328;
-  --input: #233328;
-  --ring: #66bb6a;
-
-  /* Accent Colors: Error & Info */
-  --error: #ef5350;
-  --error-foreground: #ffffff;
-  --error-surface: #2b0e12;
-  --error-border: #7f1d1d;
-
-  --info: #29b6f6;
-  --info-foreground: #000000;
-  --info-surface: #0a2133;
-  --info-border: #0369a1;
-
-  /* Additional Feedback Accents */
-  --success: #66bb6a;
-  --success-foreground: #09170c;
-  --success-surface: #102616;
-
-  --warning: #ffa726;
-  --warning-foreground: #000000;
-  --warning-surface: #2e1c05;
-}
-
-@theme inline {
-  --color-brand-50: var(--brand-50);
-  --color-brand-200: var(--brand-200);
-  --color-brand-400: var(--brand-400);
-  --color-brand-900: var(--brand-900);
-
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-surface: var(--surface);
-  --color-surface-variant: var(--surface-variant);
-
-  --color-primary: var(--primary);
-  --color-primary-hover: var(--primary-hover);
-  --color-primary-foreground: var(--primary-foreground);
-
-  --color-secondary: var(--secondary);
-  --color-secondary-hover: var(--secondary-hover);
-  --color-secondary-foreground: var(--secondary-foreground);
-
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-
-  --color-error: var(--error);
-  --color-error-foreground: var(--error-foreground);
-  --color-error-surface: var(--error-surface);
-  --color-error-border: var(--error-border);
-
-  --color-info: var(--info);
-  --color-info-foreground: var(--info-foreground);
-  --color-info-surface: var(--info-surface);
-  --color-info-border: var(--info-border);
-
-  --color-success: var(--success);
-  --color-success-foreground: var(--success-foreground);
-  --color-success-surface: var(--success-surface);
-
-  --color-warning: var(--warning);
-  --color-warning-foreground: var(--warning-foreground);
-  --color-warning-surface: var(--warning-surface);
-
-  --font-sans: var(--font-poppins);
-  --font-heading: var(--font-jost);
-}
-
 body {
-  background: var(--background);
-  color: var(--foreground);
   font-family: var(--font-poppins), Arial, Helvetica, sans-serif;
-  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 h1,
@@ -161,4 +11,13 @@ h4,
 h5,
 h6 {
   font-family: var(--font-jost), Arial, Helvetica, sans-serif;
+}
+
+.hide-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
 }

@@ -5,7 +5,6 @@ import MuiTextField, { TextFieldProps as MuiTextFieldProps } from '@mui/material
 import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
 import CircularProgress from '@mui/material/CircularProgress';
-import type { Theme } from '@mui/material/styles';
 
 export type BrandInputVariant = 'outlined' | 'soft' | 'underlined';
 
@@ -19,7 +18,7 @@ export interface InputFieldProps
   startAdornment?: React.ReactNode;
   /** Element rendered at the end of the field (e.g. an icon or unit). */
   endAdornment?: React.ReactNode;
-  /** Visual success state (green border + helper text color). */
+  /** Visual success state for the field border and helper text. */
   success?: boolean;
 }
 
@@ -52,10 +51,7 @@ export function InputField({
               borderColor: 'brand.200',
             },
             '&:hover': {
-              bgcolor: (theme: Theme) =>
-                theme.palette.mode === 'dark'
-                  ? 'rgba(102, 187, 106, 0.08)'
-                  : theme.palette.brand[50],
+              bgcolor: 'action.hover',
             },
             '&:hover fieldset': {
               borderColor: 'primary.main',
@@ -68,7 +64,6 @@ export function InputField({
       case 'underlined':
         return {
           '& .MuiOutlinedInput-root': {
-            bgcolor: 'transparent',
             borderRadius: 0,
             '& fieldset': {
               border: 'none',
@@ -88,7 +83,6 @@ export function InputField({
       default:
         return {
           '& .MuiOutlinedInput-root': {
-            bgcolor: 'transparent',
             '& fieldset': {
               borderWidth: '1.5px',
               borderColor: 'brand.200',

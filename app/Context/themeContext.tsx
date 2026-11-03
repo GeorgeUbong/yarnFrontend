@@ -14,8 +14,6 @@ import type { Theme } from '@mui/material/styles';
 import {
   lightTheme,
   darkTheme,
-  BRAND_COLORS,
-  ACCENT_COLORS,
 } from '../theme/theme';
 
 export type ThemeMode = 'light' | 'dark' | 'system';
@@ -27,8 +25,6 @@ export interface ThemeContextType {
   isDark: boolean;
   setMode: (mode: ThemeMode) => void;
   toggleTheme: () => void;
-  brandColors: typeof BRAND_COLORS;
-  accentColors: typeof ACCENT_COLORS;
   theme: Theme;
 }
 
@@ -51,26 +47,29 @@ export function ThemeProvider({
 
   // Read initial stored mode and listen for system preference
   useEffect(() => {
-    setMounted(true);
-    try {
-      const stored = localStorage.getItem(THEME_STORAGE_KEY) as ThemeMode | null;
-      if (stored && (stored === 'light' || stored === 'dark' || stored === 'system')) {
-        setModeState(stored);
-      }
-    } catch {
-      // Ignore localStorage access issues if disabled in browser
-    }
-
-    // Media query for system theme
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    setSystemMode(mediaQuery.matches ? 'dark' : 'light');
+    const frame = window.requestAnimationFrame(() => {
+      setMounted(true);
+      try {
+        const stored = localStorage.getItem(THEME_STORAGE_KEY) as ThemeMode | null;
+        if (stored && (stored === 'light' || stored === 'dark' || stored === 'system')) {
+          setModeState(stored);
+        }
+      } catch {
+        // Ignore localStorage access issues if disabled in browser
+      }
+      setSystemMode(mediaQuery.matches ? 'dark' : 'light');
+    });
 
     const handleChange = (e: MediaQueryListEvent) => {
       setSystemMode(e.matches ? 'dark' : 'light');
     };
 
     mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      mediaQuery.removeEventListener('change', handleChange);
+    };
   }, []);
 
   const resolvedMode: ResolvedTheme = useMemo(() => {
@@ -121,8 +120,6 @@ export function ThemeProvider({
       isDark,
       setMode,
       toggleTheme,
-      brandColors: BRAND_COLORS,
-      accentColors: ACCENT_COLORS,
       theme: activeTheme,
     }),
     [mode, resolvedMode, isDark, setMode, toggleTheme, activeTheme]
