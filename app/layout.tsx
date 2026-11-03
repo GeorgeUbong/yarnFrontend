@@ -4,7 +4,7 @@ import { jost, poppins } from "./theme/fonts";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Signup | Everyone",
+  title: "YarnNaija | Everyone",
   description: "Talk to anyone, talk to everyone.",
 };
 
