@@ -2,9 +2,8 @@ import { z } from "zod";
 import { redirectToLogin } from "../auth-session";
 
 export const API_BASE_URL = (
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"
+  process.env.NEXT_PUBLIC_API_URL || "/api/v1"
 ).replace(/\/+$/, "");
-export const HEAD = "/api/v1/";
 
 export class ApiError extends Error {
   constructor(
@@ -99,9 +98,9 @@ async function getErrorDetails(
     response.statusText ||
     "The server returned an empty error response.";
   const message =
-    response.status === 401 && path === "login"
+    response.status === 401 && path.replace(/^\/+/, "") === "login"
       ? "Invalid email or password."
-      : response.status === 409 && path === "signup"
+      : response.status === 409 && path.replace(/^\/+/, "") === "signup"
         ? "Email already in use."
         : response.status === 403
       ? "You don't have permission to do that."
@@ -127,7 +126,7 @@ function isAuthEndpoint(path: string): boolean {
 
 async function sendRequest(path: string, init: RequestInit): Promise<Response> {
   try {
-    return await fetch(`${API_BASE_URL}${HEAD}${path}`, {
+    return await fetch(`${API_BASE_URL}${path}`, {
       ...init,
       credentials: "include",
       cache: "no-store",
@@ -140,7 +139,7 @@ async function sendRequest(path: string, init: RequestInit): Promise<Response> {
 async function refreshSession(): Promise<void> {
   if (!refreshInFlight) {
     refreshInFlight = requestJson(
-      "refresh",
+      "/refresh",
       { method: "POST" },
       refreshResponseSchema,
       "Refreshing session",

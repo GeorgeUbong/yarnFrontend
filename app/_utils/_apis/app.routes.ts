@@ -75,7 +75,7 @@ function newestFirst(posts: Post[]): Post[] {
 
 export function getCurrentUser(): Promise<User> {
   return requestJson(
-    "users/me",
+    "/users/me",
     { method: "GET" },
     userResponseSchema,
     "Fetching current user",
@@ -83,14 +83,14 @@ export function getCurrentUser(): Promise<User> {
 }
 
 const POST_ROUTES = {
-  allPosts: "posts",
-  create: "create",
-  search: "search",
+  allPosts: "/posts",
+  create: "/create",
+  search: "/search",
 };
 
 export function getOwnPosts(): Promise<Post[]> {
   return requestJson(
-    "posts/user",
+    "/posts/user",
     { method: "GET" },
     postsSchema,
     "Fetching your posts",
@@ -171,7 +171,7 @@ export function updatePost(
   }
 
   return requestJson(
-    encodeURIComponent(id),
+    `/${encodeURIComponent(id)}`,
     {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -184,7 +184,7 @@ export function updatePost(
 
 export function deletePost(id: string): Promise<DeletePostResponse> {
   return requestJson(
-    encodeURIComponent(id),
+    `/${encodeURIComponent(id)}`,
     {
       method: "DELETE",
       headers: { "Idempotency-Key": crypto.randomUUID() },
@@ -214,7 +214,7 @@ export async function updateUsername(input: {
   }
 
   const response = await requestJson(
-    "users/name",
+    "/users/name",
     {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -242,7 +242,7 @@ export async function updateProfileImage(file: File): Promise<User> {
   form.append("image", file);
 
   const response = await requestJson(
-    "users/me/profile-image",
+    "/users/me/profile-image",
     { method: "POST", body: form },
     userResponseSchema,
     "Updating profile image",

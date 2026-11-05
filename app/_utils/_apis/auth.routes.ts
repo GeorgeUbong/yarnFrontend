@@ -2,7 +2,7 @@ import { z } from "zod";
 import { requestJson } from "./api-client";
 import type { AuthUser } from "../auth-types";
 
-export { API_BASE_URL, HEAD } from "./api-client";
+export { API_BASE_URL } from "./api-client";
 
 export interface SignupRequest {
   username: string;
@@ -38,7 +38,7 @@ export type RefreshTokenResponse = z.infer<typeof refreshTokenResponseSchema>;
 
 export async function signup(input: SignupRequest): Promise<SignupResponse> {
   return requestJson(
-    "signup",
+    "/signup",
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -52,7 +52,7 @@ export async function signup(input: SignupRequest): Promise<SignupResponse> {
 
 export async function login(input: LoginRequest): Promise<LoginResponse> {
   return requestJson(
-    "login",
+    "/login",
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -66,7 +66,7 @@ export async function login(input: LoginRequest): Promise<LoginResponse> {
 
 export async function refreshAccessToken(): Promise<RefreshTokenResponse> {
   return requestJson(
-    "refresh",
+    "/refresh",
     { method: "POST" },
     refreshTokenResponseSchema,
     "Token refresh",
@@ -76,7 +76,7 @@ export async function refreshAccessToken(): Promise<RefreshTokenResponse> {
 
 export async function logout(): Promise<void> {
   await requestJson(
-    "logout",
+    "/logout",
     { method: "POST" },
     logoutResponseSchema,
     "Logout",
