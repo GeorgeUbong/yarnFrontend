@@ -35,7 +35,9 @@ export function PostCard({
   const isOwnPost = user?.id === post.authorId;
   const authorName =
     isOwnPost && user ? user.username : post.author.username;
-  const authorImage = isOwnPost ? user?.profileImage ?? undefined : undefined;
+  const authorImage =
+    post.author.profileImage ??
+    (isOwnPost ? user?.profileImage ?? undefined : undefined);
 
   useEffect(() => {
     const timer = window.setTimeout(() => {

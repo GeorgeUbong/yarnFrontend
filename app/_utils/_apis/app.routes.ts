@@ -17,6 +17,7 @@ const postSchema = z.object({
   author: z.object({
     id: z.number(),
     username: z.string(),
+    profileImage: z.string().nullable().optional(),
   }),
 });
 
