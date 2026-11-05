@@ -2,7 +2,7 @@ import { z } from "zod";
 import { requestJson } from "./api-client";
 import type { AuthUser } from "../auth-types";
 
-export { API_BASE_URL } from "./api-client";
+export { API_BASE } from "./api-client";
 
 export interface SignupRequest {
   username: string;

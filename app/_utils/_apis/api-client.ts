@@ -1,9 +1,7 @@
 import { z } from "zod";
 import { redirectToLogin } from "../auth-session";
 
-export const API_BASE_URL = (
-  process.env.NEXT_PUBLIC_API_URL || "/api/v1"
-).replace(/\/+$/, "");
+export const API_BASE = "/api/v1";
 
 export class ApiError extends Error {
   constructor(
@@ -126,7 +124,7 @@ function isAuthEndpoint(path: string): boolean {
 
 async function sendRequest(path: string, init: RequestInit): Promise<Response> {
   try {
-    return await fetch(`${API_BASE_URL}${path}`, {
+    return await fetch(`${API_BASE}${path}`, {
       ...init,
       credentials: "include",
       cache: "no-store",
@@ -175,7 +173,7 @@ export async function requestJson<T>(
 
   if (!response.ok) {
     const details = await getErrorDetails(response, path);
-    if (response.status === 401 && path === "refresh") {
+    if (response.status === 401 && path.replace(/^\/+/, "") === "refresh") {
       redirectToLogin();
     }
     if (response.status === 401 && retryUnauthorized) {
