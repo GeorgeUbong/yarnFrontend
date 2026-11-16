@@ -83,11 +83,11 @@ export default function FeedLayout({
   }
 
   return (
-    <div className="flex min-h-dvh flex-col lg:h-dvh lg:overflow-hidden">
+    <div className="flex h-dvh flex-col overflow-hidden">
       <div className="shrink-0">
         <NavBar />
       </div>
-      <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col lg:min-h-0">
+      <div className="mx-auto flex min-h-0 w-full max-w-7xl flex-1 flex-col">
         {protectedContent}
       </div>
     </div>

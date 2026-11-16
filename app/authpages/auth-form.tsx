@@ -2,6 +2,7 @@
 
 import { useEffect, useState, type FormEvent } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import MuiLink from "@mui/material/Link";
 import { useRouter } from "next/navigation";
 import Box from "@mui/material/Box";
@@ -10,8 +11,8 @@ import InputAdornment from "@mui/material/InputAdornment";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import Stack from "@mui/material/Stack";
-import Avatar from "@mui/material/Avatar";
-import AvatarGroup from "@mui/material/AvatarGroup";
+
+import bgImage from "../assets/bg_Image.jpg";
 
 import { Button } from "../components/button";
 import { login, signup } from "../_utils/_apis/auth.routes";
@@ -76,7 +77,9 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
           })
         : login({ email, password }));
       setUser(response.user);
-      toast.success(isSignup ? "Account created successfully." : "Logged in successfully.");
+      toast.success(
+        isSignup ? "Account created successfully." : "Logged in successfully.",
+      );
       router.replace("/feed");
     } catch (error) {
       if (error instanceof ApiError) {
@@ -92,46 +95,31 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
 
   return (
     <main className="flex min-h-screen w-full flex-col lg:flex-row">
+      {/** SIDEBAR IMAGE */}
       <Box
         component="section"
         aria-label="Welcome to YarnNaija"
-        className="relative hidden min-h-[320px] w-full flex-col justify-center overflow-hidden px-6 py-14 sm:px-12 lg:flex lg:min-h-screen lg:w-1/2 lg:px-11 xl:px-16"
-        sx={{
-          bgcolor: "primary.main",
-          color: "primary.contrastText",
-        }}
+        className="relative flex h-[220px] min-h-[220px] w-full flex-col justify-center overflow-hidden px-6 py-8 sm:h-[260px] sm:min-h-[260px] sm:px-12 lg:h-auto lg:min-h-screen lg:w-1/2 lg:px-11 lg:py-14 xl:px-16"
+        sx={{ color: "common.white" }}
       >
+        {/* Background image */}
+        <Image
+          src={bgImage}
+          alt=""
+          fill
+          priority
+          sizes="(min-width: 1024px) 50vw, 100vw"
+          className="object-cover"
+          style={{ objectPosition: "center 68%" }}
+        />
+
+        {/* Gradient overlay for text readability */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute -left-28 -top-32 opacity-[0.14] sm:-left-24 sm:-top-36"
-        >
-          <svg
-            width="390"
-            height="390"
-            viewBox="0 0 300 300"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <g stroke="currentColor" strokeWidth="2">
-              <ellipse cx="150" cy="82" rx="53" ry="99" />
-              <ellipse
-                cx="150"
-                cy="82"
-                rx="53"
-                ry="99"
-                transform="rotate(60 150 150)"
-              />
-              <ellipse
-                cx="150"
-                cy="82"
-                rx="53"
-                ry="99"
-                transform="rotate(120 150 150)"
-              />
-            </g>
-          </svg>
-        </div>
+          className="pointer-events-none absolute inset-0 bg-linear-to-t from-green-950 via-green-950/55 to-transparent"
+        />
 
+        {/* Text */}
         <div className="relative z-10 mx-auto w-full max-w-xl lg:mx-0">
           <Typography
             component="h1"
@@ -147,42 +135,20 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
             To Everyone.
           </Typography>
 
-          <div className="mt-7 flex items-center gap-4 sm:mt-8">
-            <AvatarGroup
-              max={3}
-              sx={{
-                "& .MuiAvatar-root": {
-                  width: { xs: 32, sm: 38 },
-                  height: { xs: 32, sm: 38 },
-                  border: "2px solid",
-                  borderColor: "primary.contrastText",
-                },
-              }}
-            >
-              <Avatar
-                alt="YarnNaija community member"
-                src="https://i.pravatar.cc/100?img=1"
-              />
-              <Avatar
-                alt="YarnNaija community member"
-                src="https://i.pravatar.cc/100?img=2"
-              />
-              <Avatar
-                alt="YarnNaija community member"
-                src="https://i.pravatar.cc/100?img=3"
-              />
-            </AvatarGroup>
-
-            <Typography
-              variant="body2"
-              sx={{ fontSize: { xs: "0.75rem", sm: "0.85rem" }, opacity: 0.95 }}
-            >
-              Everyone is saying something, say something too.
-            </Typography>
-          </div>
+          <Typography
+            variant="body2"
+            sx={{
+              mt: 3,
+              fontSize: { xs: "0.75rem", sm: "0.85rem" },
+              opacity: 0.95,
+            }}
+          >
+            Everyone is saying something, say something too.
+          </Typography>
         </div>
       </Box>
 
+      {/** FORM */}
       <Box
         component="section"
         aria-label={isSignup ? "Create your account" : "Log in to your account"}
@@ -207,14 +173,12 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
             variant="caption"
             sx={{ color: "text.secondary", display: "block", mb: 4 }}
           >
-            {isSignup ? "Enter your details to create an account." : "Log in with your email and password."}
+            {isSignup
+              ? "Enter your details to create an account."
+              : "Log in with your email and password."}
           </Typography>
 
-          <Stack
-            component="form"
-            onSubmit={handleSubmit}
-            spacing={2.5}
-          >
+          <Stack component="form" onSubmit={handleSubmit} spacing={2.5}>
             {isSignup && (
               <TextField
                 aria-label="Username"
@@ -375,14 +339,12 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
             variant="body2"
             sx={{ color: "text.secondary", mt: 3, textAlign: "center" }}
           >
-            {isSignup ? "Already have an account?" : "Don't have an account yet?"}{" "}
+            {isSignup
+              ? "Already have an account?"
+              : "Don't have an account yet?"}{" "}
             <MuiLink
               component={Link}
-                    href={
-                      isSignup
-                        ? "/authpages/loginpage"
-                        : "/authpages/signuppage"
-                    }
+              href={isSignup ? "/authpages/loginpage" : "/authpages/signuppage"}
               color="primary"
               className="font-semibold underline-offset-4 hover:underline"
             >

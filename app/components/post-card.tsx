@@ -10,10 +10,14 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import IconButton from "@mui/material/IconButton";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
 import MuiButton from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import DeleteOutline from "@mui/icons-material/DeleteOutlineOutlined";
+import EditOutlined from "@mui/icons-material/EditOutlined";
+import MoreVert from "@mui/icons-material/MoreVert";
 
 import { useAuth } from "../Context/authContext";
 import { deletePost, type Post } from "../_utils/_apis/app.routes";
@@ -24,13 +28,16 @@ import { toast } from "react-toastify";
 export function PostCard({
   post,
   onDeleted,
+  onEdit,
 }: {
   post: Post;
   onDeleted: (id: string) => void;
+  onEdit: (post: Post) => void;
 }) {
   const { user } = useAuth();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
   const [currentTime, setCurrentTime] = useState<number | null>(null);
   const isOwnPost = user?.id === post.authorId;
   const authorName =
@@ -113,12 +120,13 @@ export function PostCard({
             </div>
             {isOwnPost && (
               <IconButton
-                aria-label="Delete post"
-                color="error"
-                onClick={() => setDialogOpen(true)}
+                aria-label="Post actions"
+                aria-haspopup="menu"
+                aria-expanded={Boolean(menuAnchorEl) || undefined}
+                onClick={(event) => setMenuAnchorEl(event.currentTarget)}
                 disabled={isDeleting}
               >
-                <DeleteOutline />
+                <MoreVert />
               </IconButton>
             )}
           </div>
@@ -127,6 +135,32 @@ export function PostCard({
           </Typography>
         </CardContent>
       </Card>
+
+      <Menu
+        anchorEl={menuAnchorEl}
+        open={Boolean(menuAnchorEl)}
+        onClose={() => setMenuAnchorEl(null)}
+      >
+        <MenuItem
+          onClick={() => {
+            setMenuAnchorEl(null);
+            onEdit(post);
+          }}
+        >
+          <EditOutlined fontSize="small" sx={{ mr: 1.5 }} />
+          Edit post
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            setMenuAnchorEl(null);
+            setDialogOpen(true);
+          }}
+          sx={{ color: "error.main" }}
+        >
+          <DeleteOutline fontSize="small" sx={{ mr: 1.5 }} />
+          Delete post
+        </MenuItem>
+      </Menu>
 
       <Dialog
         open={dialogOpen}

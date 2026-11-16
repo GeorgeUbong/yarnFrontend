@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, type FormEvent } from "react";
+import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Dialog from "@mui/material/Dialog";
@@ -12,6 +13,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import { alpha } from "@mui/material/styles";
 
 import { Button } from "../components/button";
 import { PostCard } from "../components/post-card";
@@ -21,6 +23,7 @@ import {
   getAllPosts,
   searchPosts,
   type Post,
+  updatePost,
 } from "../_utils/_apis/app.routes";
 import { ApiError } from "../_utils/_apis/api-client";
 import { toast } from "react-toastify";
@@ -43,6 +46,7 @@ export default function FeedPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [content, setContent] = useState("");
+  const [editingPost, setEditingPost] = useState<Post | null>(null);
   const [query, setQuery] = useState("");
   const [loadError, setLoadError] = useState<string | null>(null);
   const [retry, setRetry] = useState(0);
@@ -86,13 +90,24 @@ export default function FeedPage() {
       return;
     }
 
+    const postBeingEdited = editingPost;
     setIsSubmitting(true);
 
     try {
-      await createPost({ content: trimmedContent });
+      const savedPost = postBeingEdited
+        ? await updatePost(postBeingEdited.id, { content: trimmedContent })
+        : await createPost({ content: trimmedContent });
+      if (postBeingEdited) {
+        setPosts((currentPosts) =>
+          currentPosts.map((post) =>
+            post.id === savedPost.id ? { ...post, ...savedPost } : post,
+          ),
+        );
+      }
       setContent("");
       setIsPostModalOpen(false);
-      toast.success("Post created successfully.");
+      setEditingPost(null);
+      toast.success(postBeingEdited ? "Post updated." : "Post created successfully.");
       try {
         const trimmedQuery = query.trim();
         const refreshedPosts = trimmedQuery
@@ -100,7 +115,11 @@ export default function FeedPage() {
           : await getAllPosts();
         setPosts(refreshedPosts);
       } catch {
-        toast.warn("Post created, but the feed could not be refreshed.");
+        toast.warn(
+          postBeingEdited
+            ? "Post updated, but the feed could not be refreshed."
+            : "Post created, but the feed could not be refreshed.",
+        );
       }
     } catch (requestError) {
       toast.error(getErrorMessage(requestError));
@@ -110,7 +129,13 @@ export default function FeedPage() {
   }
 
   function closePostModal() {
-    if (!isSubmitting) setIsPostModalOpen(false);
+    if (!isSubmitting) {
+      setIsPostModalOpen(false);
+      if (editingPost) {
+        setEditingPost(null);
+        setContent("");
+      }
+    }
   }
 
   // Shared by the desktop card and the mobile modal
@@ -134,64 +159,84 @@ export default function FeedPage() {
         fullWidth
         isLoading={isSubmitting}
       >
-        {isSubmitting ? "Posting..." : "Post"}
+        {isSubmitting
+          ? editingPost
+            ? "Saving..."
+            : "Posting..."
+          : editingPost
+            ? "Make edit"
+            : "Post"}
       </Button>
     </Stack>
   );
 
   return (
-    <main className="flex flex-1 flex-col p-4 sm:p-6 lg:min-h-0">
-      <h1 className="mb-4 text-2xl font-bold">Home</h1>
-
-      {/* Search */}
-      <div className="mb-6 sm:mb-8">
-        <OutlinedInput
-          fullWidth
-          size="small"
-          placeholder="Search posts"
-          inputProps={{ "aria-label": "Search posts" }}
-          value={query}
-          onChange={(event) => {
-            setIsLoading(true);
-            setLoadError(null);
-            setQuery(event.target.value);
+    <main className="flex min-h-0 flex-1 flex-col overflow-hidden p-4 sm:p-6">
+      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain lg:contents">
+        <Box
+          component="div"
+          className="sticky top-0 z-10 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:static lg:mx-0 lg:px-0"
+          sx={{
+            bgcolor: (theme) => alpha(theme.palette.background.default, 0.78),
+            backdropFilter: "blur(8px)",
+            WebkitBackdropFilter: "blur(8px)",
           }}
-          startAdornment={
-            <InputAdornment position="start">
-              <i
-                className="fa-solid fa-magnifying-glass text-sm"
-                aria-hidden="true"
-              />
-            </InputAdornment>
-          }
-          endAdornment={
-            query ? (
-              <InputAdornment position="end">
-                <IconButton
-                  size="small"
-                  aria-label="Clear search"
-                  onClick={() => {
-                    setIsLoading(true);
-                    setLoadError(null);
-                    setQuery("");
-                  }}
-                  edge="end"
-                >
-                  <i className="fa-solid fa-xmark text-sm" aria-hidden="true" />
-                </IconButton>
-              </InputAdornment>
-            ) : null
-          }
-          sx={inputSx}
-        />
-      </div>
-
-      <div className="grid flex-1 gap-4 lg:min-h-0 lg:grid-cols-[minmax(0,1.7fr)_minmax(280px,1fr)] lg:grid-rows-[minmax(0,1fr)] lg:gap-6">
-        {/* Posts (extra bottom padding on mobile so the button never covers content) */}
-        <section
-          aria-label="Posts"
-          className="hide-scrollbar pb-24 lg:min-h-0 lg:overflow-y-auto lg:overscroll-contain lg:pb-0"
         >
+          <h1 className="mb-4 text-2xl font-bold">Home</h1>
+
+          {/* Search */}
+          <div className="mb-6 sm:mb-8">
+            <OutlinedInput
+              fullWidth
+              size="small"
+              placeholder="Search posts"
+              inputProps={{ "aria-label": "Search posts" }}
+              value={query}
+              onChange={(event) => {
+                setIsLoading(true);
+                setLoadError(null);
+                setQuery(event.target.value);
+              }}
+              startAdornment={
+                <InputAdornment position="start">
+                  <i
+                    className="fa-solid fa-magnifying-glass text-sm"
+                    aria-hidden="true"
+                  />
+                </InputAdornment>
+              }
+              endAdornment={
+                query ? (
+                  <InputAdornment position="end">
+                    <IconButton
+                      size="small"
+                      aria-label="Clear search"
+                      onClick={() => {
+                        setIsLoading(true);
+                        setLoadError(null);
+                        setQuery("");
+                      }}
+                      edge="end"
+                    >
+                      <i
+                        className="fa-solid fa-xmark text-sm"
+                        aria-hidden="true"
+                      />
+                    </IconButton>
+                  </InputAdornment>
+                ) : null
+              }
+              sx={inputSx}
+            />
+          </div>
+        </Box>
+
+        <div className="grid gap-4 lg:min-h-0 lg:flex-1 lg:grid-cols-[minmax(0,1.7fr)_minmax(280px,1fr)] lg:grid-rows-[minmax(0,1fr)] lg:gap-6">
+          {/* Posts (extra bottom padding on mobile so the button never covers content) */}
+          <section
+            aria-label="Posts"
+            className="hide-scrollbar pb-24 lg:min-h-0 lg:overflow-y-auto lg:overscroll-contain lg:pb-0"
+          >
           <Stack spacing={2}>
             {loadError ? (
               <Button
@@ -215,6 +260,11 @@ export default function FeedPage() {
                 <PostCard
                   key={post.id}
                   post={post}
+                  onEdit={(postToEdit) => {
+                    setEditingPost(postToEdit);
+                    setContent(postToEdit.content);
+                    setIsPostModalOpen(true);
+                  }}
                   onDeleted={(id) =>
                     setPosts((currentPosts) =>
                       currentPosts.filter((item) => item.id !== id),
@@ -234,17 +284,18 @@ export default function FeedPage() {
               </Card>
             )}
           </Stack>
-        </section>
+          </section>
 
-        {/* Desktop: sidebar post box */}
-        <Card variant="outlined" className="hidden h-fit lg:block">
-          <CardContent>
-            <Typography component="h2" variant="h6" className="mb-4">
-              Make a post
-            </Typography>
-            {postForm}
-          </CardContent>
-        </Card>
+          {/* Desktop: sidebar post box */}
+          <Card variant="outlined" className="hidden h-fit lg:block">
+            <CardContent>
+              <Typography component="h2" variant="h6" className="mb-4">
+                Make a post
+              </Typography>
+              {postForm}
+            </CardContent>
+          </Card>
+        </div>
       </div>
 
       {/* Mobile: floating button that opens the post modal */}
@@ -253,7 +304,10 @@ export default function FeedPage() {
           variant="extended"
           color="primary"
           aria-label="Make a post"
-          onClick={() => setIsPostModalOpen(true)}
+          onClick={() => {
+            setEditingPost(null);
+            setIsPostModalOpen(true);
+          }}
           sx={{
             position: "fixed",
             left: "50%",
@@ -269,38 +323,38 @@ export default function FeedPage() {
           <i className="fa-solid fa-pen" aria-hidden="true" />
           Make a post
         </Fab>
-
-        <Dialog
-          open={isPostModalOpen}
-          onClose={closePostModal}
-          fullWidth
-          maxWidth="sm"
-          aria-labelledby="make-post-title"
-        >
-          <DialogTitle
-            id="make-post-title"
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
-            Make a post
-            <IconButton
-              aria-label="Close"
-              onClick={closePostModal}
-              disabled={isSubmitting}
-              edge="end"
-              size="small"
-            >
-              <i className="fa-solid fa-xmark" aria-hidden="true" />
-            </IconButton>
-          </DialogTitle>
-          <DialogContent>
-            <div className="pt-1">{postForm}</div>
-          </DialogContent>
-        </Dialog>
       </div>
+
+      <Dialog
+        open={isPostModalOpen}
+        onClose={closePostModal}
+        fullWidth
+        maxWidth="sm"
+        aria-labelledby="make-post-title"
+      >
+        <DialogTitle
+          id="make-post-title"
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          {editingPost ? "Edit post" : "Make a post"}
+          <IconButton
+            aria-label="Close"
+            onClick={closePostModal}
+            disabled={isSubmitting}
+            edge="end"
+            size="small"
+          >
+            <i className="fa-solid fa-xmark" aria-hidden="true" />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent>
+          <div className="pt-1">{postForm}</div>
+        </DialogContent>
+      </Dialog>
     </main>
   );
 }

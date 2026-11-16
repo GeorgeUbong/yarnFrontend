@@ -144,7 +144,13 @@ export default function SettingsPage() {
 
   return (
     <main className="mx-auto w-full max-w-[720px] flex-1 space-y-6 overflow-y-auto p-4 sm:p-6 lg:min-h-0 lg:overscroll-contain">
-      <Typography variant="h4" sx={{ fontWeight: 700 }}>
+      <Typography
+        variant="h4"
+        sx={{
+          fontWeight: 700,
+          fontSize: { xs: "1.5rem", sm: "2.125rem" },
+        }}
+      >
         Settings
       </Typography>
 
