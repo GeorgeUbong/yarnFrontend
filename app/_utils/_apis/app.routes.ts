@@ -184,7 +184,7 @@ export function updatePost(
 
 export function deletePost(id: string): Promise<DeletePostResponse> {
   return requestJson(
-    `/${encodeURIComponent(id)}`,
+    `/${encodeURIComponent(id)}`, 
     {
       method: "DELETE",
       headers: { "Idempotency-Key": crypto.randomUUID() },

@@ -32,7 +32,7 @@ export function PostCard({
 }: {
   post: Post;
   onDeleted: (id: string) => void;
-  onEdit: (post: Post) => void;
+  onEdit?: (post: Post) => void;
 }) {
   const { user } = useAuth();
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -141,15 +141,17 @@ export function PostCard({
         open={Boolean(menuAnchorEl)}
         onClose={() => setMenuAnchorEl(null)}
       >
-        <MenuItem
-          onClick={() => {
-            setMenuAnchorEl(null);
-            onEdit(post);
-          }}
-        >
-          <EditOutlined fontSize="small" sx={{ mr: 1.5 }} />
-          Edit post
-        </MenuItem>
+        {onEdit && (
+          <MenuItem
+            onClick={() => {
+              setMenuAnchorEl(null);
+              onEdit(post);
+            }}
+          >
+            <EditOutlined fontSize="small" sx={{ mr: 1.5 }} />
+            Edit post
+          </MenuItem>
+        )}
         <MenuItem
           onClick={() => {
             setMenuAnchorEl(null);
